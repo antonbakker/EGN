@@ -1,0 +1,45 @@
+SELECT
+  YEAR(gbkmut.datum) AS Year,
+  datepart(mm, gbkmut.datum) AS Month,
+  (
+    SUM(
+      CASE
+        WHEN (gbkmut.transsubtype NOT IN ('R','S')
+          AND gbkmut.bdr_hfl >= 0)
+          OR (gbkmut.transsubtype IN ('R','S')
+          AND gbkmut.bdr_hfl < 0)
+          THEN gbkmut.bdr_hfl
+        ELSE NULL
+      END
+    )
+  ) AS Debit,
+  (
+    SUM(
+      CASE
+        WHEN (gbkmut.transsubtype NOT IN ('R','S')
+          AND gbkmut.bdr_hfl >= 0)
+          OR (gbkmut.transsubtype IN ('R','S')
+          AND gbkmut.bdr_hfl < 0)
+          THEN NULL
+        ELSE -gbkmut.bdr_hfl
+      END
+    )
+  ) AS Credit,
+  (
+    SUM(gbkmut.bdr_hfl)) AS Balance
+FROM
+  gbkmut
+INNER JOIN grtbk on gbkmut.reknr = grtbk.reknr
+ WHERE gbkmut.transtype IN ('N', 'C', 'P')
+ AND gbkmut.reknr = '     8030'
+ AND ISNULL(gbkmut.transsubtype,'') <> 'X'
+ AND gbkmut.oorsprong <> 'S'  AND gbkmut.remindercount <=13 GROUP BY YEAR(gbkmut.datum), datepart(mm, gbkmut.datum) ORDER BY YEAR(gbkmut.datum), datepart(mm, gbkmut.datum)  '     8030'
+ AND ISNULL(gbkmut.transsubtype,'') <> 'X'
+ AND gbkmut.oorsprong <> 'S'
+ AND gbkmut.remindercount <=13
+GROUP BY
+  YEAR(gbkmut.datum),
+  datepart(mm, gbkmut.datum)
+ORDER BY
+  YEAR(gbkmut.datum),
+  datepart(mm, gbkmut.datum)

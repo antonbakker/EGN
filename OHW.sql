@@ -11,6 +11,7 @@ SELECT
 	q.fullname AS Projectleider,
 		--,  q.Uitvoerder,  ***** manager is zolang uitvoerder later lid mederwerker die geen projectleider is
 	[561].[dbo].PRProject.Memo AS Opmerkingen
+
 FROM
 	(
 		SELECT
@@ -33,15 +34,19 @@ FROM
 			SELECT
 				gm.project,
 				gm.datum,
+
 				CASE
 					WHEN omzrek = 'j' THEN (gm.bdr_hfl)
 				END AS omzet,
+
 				CASE
 					WHEN omzrek <> 'j' THEN (gm.bdr_hfl)
 				END AS kosten
+
 			FROM
 				[561].[dbo].gbkmut AS gm
 				INNER JOIN  [561].[dbo].grtbk AS gb ON gm.reknr = gb.reknr
+
 			WHERE
 				(gm.transtype NOT IN ('V', 'B'))
 				AND (gm.transsubtype <> 'X')
@@ -79,6 +84,7 @@ FROM
   INNER JOIN [561].[dbo].PRProject
 		ON [561].[dbo].PRProject.ProjectNr = q.project
 	where
-		datum >= ?
+/*		datum >= ?
 		and datum <= ?
-		and [561].[dbo].PRProject.Status='A'
+		and */
+		[561].[dbo].PRProject.Status='A'
